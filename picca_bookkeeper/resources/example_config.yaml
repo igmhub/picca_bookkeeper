@@ -239,7 +239,7 @@ fits:
     # defualt: auto auto cross cross (lyaxlya, lyaxqso, lyaxlyb, lybxqso)
     smooth_covariance:
       general:
-        block-types: auto cross
+        correlation-types: auto cross
 
     vega_auto:
       general:
