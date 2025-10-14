@@ -24,4 +24,4 @@ fits:
   extra args:
     smooth_covariance:
       general:
-        covariance-types: auto cross
+        correlation-types: auto cross
