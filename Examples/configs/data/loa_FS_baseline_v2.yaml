@@ -14,10 +14,9 @@ data:
 delta extraction:
   calib: 1
   calib region: ciii
-  # dla: /global/cfs/cdirs/desi/science/lya/y3/loa/catalogs/loa_gp_and_tmp_or_gp_and_cnn_snr_2_cat_20241217.fits
-  # bal: /global/cfs/cdirs/desi/science/lya/y3/loa/catalogs/QSO_cat_loa_main_dark_healpix_v2-altbal-20241115.fits
-  # mask file: /global/cfs/cdirs/desi/science/lya/y3/loa/deltas/delta-lya-3-0/continuum_fitting_mask.txt
-  use existing: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-0-1-0/baseline
+  dla: /global/cfs/cdirs/desi/science/lya/y3/loa/catalogs/loa_gp_and_tmp_or_gp_and_cnn_snr_2_cat_20241217.fits
+  bal: /global/cfs/cdirs/desi/science/lya/y3/loa/catalogs/QSO_cat_loa_main_dark_healpix_v2-altbal-20241115.fits
+  mask file: /global/cfs/cdirs/desi/science/lya/y3/loa/deltas/delta-lya-3-0/continuum_fitting_mask.txt
   
 correlations: {}
 
@@ -25,5 +24,4 @@ fits:
   extra args:
     smooth_covariance:
       general:
-        # block-types: auto cross
         covariance-types: auto cross
