@@ -3732,6 +3732,7 @@ class Bookkeeper:
             cross_correlations = []
 
         args = {}
+        correlations = []
         for auto_correlation in auto_correlations:
             absorber, region, absorber2, region2 = auto_correlation.replace(
                 "-", "."
@@ -3745,11 +3746,13 @@ class Bookkeeper:
                 self.paths.cf_fname(
                     absorber, region, absorber2, region2).resolve()
             )
-
-            args[f"{region}-{region2}"] = str(
-                self.paths.cf_fname("lya", region, "lya", region2).resolve()
-            )
-
+            correlations.append(str(
+                self.paths.cf_fname(absorber, region, absorber2, region2).resolve()
+            ))
+            #args[f"{region}-{region2}"] = str(
+                # self.paths.cf_fname("lya", region, "lya", region2).resolve()
+            # )
+            
         for cross_correlation in cross_correlations:
             (
                 tracer,
@@ -3764,11 +3767,15 @@ class Bookkeeper:
             input_files.append(self.paths.xcf_fname(
                 absorber, region, tracer).resolve())
 
-            args[f"{region}-qso"] = str(
-                self.paths.xcf_fname("lya", region, tracer).resolve()
-            )
-
+            #args[f"{region}-qso"] = str(
+                # self.paths.xcf_fname("lya", region, tracer).resolve()
+            # )
+            correlations.append(str(
+                self.paths.xcf_fname(absorber, region, tracer).resolve()
+            ))
+            
         # Now slurm args
+        args['correlations'] = " ".join(correlations)
         command = "write_full_covariance.py"
 
         updated_extra_args = self.generate_extra_args(
@@ -3798,7 +3805,7 @@ class Bookkeeper:
         args = DictUtils.merge_dicts(args, updated_extra_args)
 
         return get_Tasker(updated_system)(
-            command="/global/cfs/cdirs/desicollab/science/lya/y1-kp6/iron-tests/correlations/scripts/write_full_covariance_matrix_flex_size.py",
+            command="picca_write_full_covariance.py",
             command_args=args,
             packages=["picca"],
             slurm_header_args=slurm_header_args,
@@ -3983,7 +3990,7 @@ class Bookkeeper:
         args = DictUtils.merge_dicts(args, updated_extra_args)
 
         return get_Tasker(updated_system)(
-            command="/global/cfs/cdirs/desicollab/science/lya/y1-kp6/iron-tests/correlations/scripts/write_smooth_covariance_flex_size.py",
+            command="picca_write_smooth_covariance.py",
             command_args=args,
             packages=["picca"],
             slurm_header_args=slurm_header_args,
