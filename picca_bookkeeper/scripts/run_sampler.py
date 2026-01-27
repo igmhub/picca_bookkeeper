@@ -207,7 +207,6 @@ def get_args() -> argparse.Namespace:
             - wait_for (Optional[List[int]]): List of job IDs that submitted
                     jobs should wait for.
             - log_level (str): Logging verbosity level (default: INFO).
-            - system (Optional[str]): Cluster/system name used when sending jobs.
 
     Raises:
     -------
@@ -236,14 +235,6 @@ def get_args() -> argparse.Namespace:
         "--only-write", action="store_true", help="Only write scripts, not send them."
     )
 
-    # Added --system argument to match usages of args.system elsewhere in the script
-    parser.add_argument(
-        "--system",
-        type=str,
-        default=None,
-        help="Target system/cluster name to use when sending jobs (e.g. 'cori', 'perlmutter').",
-    )
-
     parser.add_argument("--wait-for", nargs="+", type=int,
                         default=None, required=False)
 
@@ -253,6 +244,13 @@ def get_args() -> argparse.Namespace:
         choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"],
     )
 
+    parser.add_argument(
+        "--system",
+        type=str,
+        default=None,
+        required=False,
+        help="System to use for job submission (e.g., 'slurm_perlmutter', 'bash')."
+    )
     args = parser.parse_args()
 
     return args
