@@ -244,6 +244,13 @@ def get_args() -> argparse.Namespace:
         choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"],
     )
 
+    parser.add_argument(
+        "--system",
+        type=str,
+        default=None,
+        required=False,
+        help="System to use for job submission (e.g., 'slurm_perlmutter', 'bash')."
+    )
     args = parser.parse_args()
 
     return args
