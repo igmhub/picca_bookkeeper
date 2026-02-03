@@ -5,12 +5,11 @@ general:
     mail-type: fail
     mail-user: herbold.9@osu.edu
   defaults file: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-1-0-0/configs/loa_fs_v4.yaml
-  
+
 data:
   bookkeeper dir: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-1-0-0/baseline
   healpix data: /global/cfs/cdirs/desi/spectro/redux/loa/healpix/
   catalog: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
-
 
 delta extraction:
   calib: 1
@@ -21,11 +20,11 @@ delta extraction:
   
 correlations: {}
 
-fits: 
+fits:
   extra args:
     smooth_covariance:
       general:
-        correlation-types: auto auto cross cross    
+        correlation-types: auto auto cross cross
     vega_auto:
       general:
         model:
