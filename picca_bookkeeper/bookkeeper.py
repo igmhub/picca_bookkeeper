@@ -3050,7 +3050,14 @@ class Bookkeeper:
             section="fits",
             command=command,
         )
-
+        
+        # pull sampler CLI flags from config
+        updated_extra_args = self.generate_extra_args(
+            config=self.config,
+            section="fits",
+            command=command,
+        )
+    
         slurm_header_args = {
             "job-name": job_name,
             "output": str(self.paths.fits_path / f"logs/{job_name}-%j.out"),
@@ -3068,9 +3075,13 @@ class Bookkeeper:
         else:
             environment = self.config["fits"]["sampler environment"]
 
+        base_command_args = {"": str(self.paths.fit_main_fname().resolve())}
+        command_args = DictUtils.merge_dicts(base_command_args, updated_extra_args)
+
         return get_Tasker(updated_system)(
             command=command,
-            command_args={"": str(self.paths.fit_main_fname().resolve())},
+            # command_args={"": str(self.paths.fit_main_fname().resolve())},
+            command_args=command_args,
             packages=["vega"],
             slurm_header_args=slurm_header_args,
             environment=environment,
