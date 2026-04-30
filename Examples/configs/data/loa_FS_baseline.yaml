@@ -1,3 +1,9 @@
+
+### Software Versions: ###
+# picca_bookkeeper: 6.0.1
+# picca: 9.19.0 / 9.19.1
+# vega: 1.7.1
+
 general:
   conda environment: /global/homes/m/mherbold/.conda/envs/full_shape_bookkeeper
   system: slurm_perlmutter
