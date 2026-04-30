@@ -7,6 +7,9 @@ conda create -n env_name numpy=1.24.4 scipy=1.15.3 matplotlib=3.10.3
 ```
 
 Activate new environment, and install Picca. 
+```bash
+conda activate evn_name
+```
 
 To get the latest version in developer mode: 
 ```bash
@@ -19,8 +22,6 @@ pip install -e .
 
 Or with pip install:
 ```bash
-conda activate evn_name
-
 pip install picca
 ```
 
@@ -42,7 +43,7 @@ then install Polychord or PocoMC (see full Vega instructions here: https://githu
 
 To get the most up-to-date version of the bookkeper, clone the repo:
 ```bash
-git clone https://github.com/cramirezpe/picca_bookkeeper.git picca_bookkeeper
+git clone https://github.com/igmhub/picca_bookkeeper.git
 
 cd picca_bookkeeper
 
