@@ -6,14 +6,25 @@ Create a new conda environment, ensuring up to date dependencies for picca, vega
 conda create -n env_name numpy=1.24.4 scipy=1.15.3 matplotlib=3.10.3
 ```
 
-Activate new environment, and install a stable version of Picca: 
+Activate new environment, and install Picca. 
+
+To get the latest version in developer mode: 
+```bash
+git clone https://github.com/igmhub/picca.git
+
+cd picca
+
+pip install -e .
+```
+
+Or with pip install:
 ```bash
 conda activate evn_name
 
-pip install picca==9.13.0
+pip install picca
 ```
 
-Install Vega:
+Then install Vega:
 ```bash
 git clone https://github.com/andreicuceu/vega.git Vega
 
@@ -22,12 +33,12 @@ cd vega
 pip install -e .
 ```
 
-For running the Vega sampler, install MPI: 
+For running the Vega sampler, also install MPI,
 ```bash
 MPICC="cc -shared" pip install --force-reinstall --no-cache-dir --no-binary=mpi4py mpi4py
 ```
 
-Then install Polychord or PocoMC (Vega instructions here: https://github.com/andreicuceu/vega). 
+then install Polychord or PocoMC (see full Vega instructions here: https://github.com/andreicuceu/vega). 
 
 To get the most up-to-date version of the bookkeper, clone the repo:
 ```bash
