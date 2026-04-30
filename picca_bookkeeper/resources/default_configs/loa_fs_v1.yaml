@@ -526,7 +526,7 @@ fits:
           seed: 2
           num_live: 512
           num_repeats: 25
-          # path:
+          path:
           name: com
           do_clustering: True
           resume: True
