@@ -1,28 +1,49 @@
+
+### Software Versions: ###
+# picca_bookkeeper: 6.0.1
+# picca: 9.19.0 / 9.19.1
+# vega: 1.7.1
+
 general:
   conda environment: /global/homes/m/mherbold/.conda/envs/full_shape_bookkeeper
   system: slurm_perlmutter
   slurm args:
     mail-type: fail
     mail-user: herbold.9@osu.edu
-  defaults file: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-0-0-0/configs/loa_fs_v1.yaml
-  
+  defaults file: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/configs/loa_fs_v8.yaml
+
 data:
-  bookkeeper dir: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-0-0-0/baseline
+  bookkeeper dir: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/baseline
   healpix data: /global/cfs/cdirs/desi/spectro/redux/loa/healpix/
-  catalog: /global/cfs/cdirs/desi/survey/catalogs/DA2/QSO/loa/QSO_cat_loa_main_dark_healpix_v2.fits
+  catalog: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
 
 delta extraction:
   calib: 1
   calib region: ciii
-  dla: /global/cfs/cdirs/desi/science/lya/y3/loa/catalogs/loa_gp_and_tmp_or_gp_and_cnn_snr_2_cat_20241217.fits
-  bal: /global/cfs/cdirs/desi/science/lya/y3/loa/catalogs/QSO_cat_loa_main_dark_healpix_v2-altbal-20241115.fits
+  dla: /global/cfs/cdirs/desi/users/mwolfson/DLA_cat/gpp_251202_new_baseline.fits
+  bal: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
   mask file: /global/cfs/cdirs/desi/science/lya/y3/loa/deltas/delta-lya-3-0/continuum_fitting_mask.txt
-  
+
 correlations: {}
 
-fits: 
+fits:
+  # sampler args
+  sampler environment: /global/homes/m/mherbold/.conda/envs/full_shape_bookkeeper
   extra args:
-    smooth_covariance:
+    vega_main:
       general:
-        block-types: auto cross # us to omit B-region
-        
+        control:
+          run_sampler: True
+          sampler: Polychord
+        Polychord:
+          num_live: 512
+          num_repeats: 24
+          do_clustering: True
+          resume: True
+          boost_posterior: 0
+  slurm args:
+    run_vega_mpi:
+      general:
+        time: "06:00:00"
+        nodes: 8
+        ntasks-per-node: 54

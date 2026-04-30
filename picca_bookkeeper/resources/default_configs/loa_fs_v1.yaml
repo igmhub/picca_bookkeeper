@@ -271,7 +271,7 @@ fits:
   auto correlations: lya.lya-lya.lya #lya.lya-lya.lyb
   cross correlations: qso-lya.lya #qso-lya.lyb
 
-  sampler environment: /global/common/software/desi/users/acuceu/stable_vega/activate_vega.sh
+  # sampler environment: /global/common/software/desi/users/acuceu/stable_vega/activate_vega.sh
 
   compute covariance: True
   smooth covariance: True

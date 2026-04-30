@@ -272,7 +272,7 @@ fits:
   auto correlations: lya.lya-lya.lya lya.lya-lya.lyb
   cross correlations: qso-lya.lya qso-lya.lyb
 
-  sampler environment: /global/common/software/desi/users/acuceu/stable_vega/activate_vega.sh
+  # sampler environment: /global/common/software/desi/users/acuceu/stable_vega/activate_vega.sh
 
   compute covariance: True
   smooth covariance: True
@@ -473,7 +473,7 @@ fits:
           seed: 2
           num_live: 512
           num_repeats: 50
-          path: /global/cfs/cdirs/desicollab/science/lya/y3/kibo/vegafits/vega-3-0-0-1/lyaxlya_lyaxlyb_lyaxqso_lybxqso/output_sampler
+          # path: /global/cfs/cdirs/desicollab/science/lya/y3/kibo/vegafits/vega-3-0-0-1/lyaxlya_lyaxlyb_lyaxqso_lybxqso/output_sampler
           name: com
           do_clustering: True
           resume: True
