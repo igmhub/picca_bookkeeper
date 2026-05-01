@@ -1,12 +1,15 @@
 ``picca_bookkeeper`` is a tool designed to help running analyses using the package [picca](https://github.com/igmhub/picca/). It allows for the computation of all the steps necessary for the Lyman-alpha 3D analysis using a unified configuration file, appropriately chaining all the jobs.
 
-# Installation
+# Installation (Updated 5/1/26)
 Create a new conda environment, ensuring up to date dependencies for picca, vega, and the bookkeeper: 
 ```bash
-conda create -n env_name numpy=1.24.4 scipy=1.15.3 matplotlib=3.10.3
+conda create -n env_name python=3.10.6 numpy scipy pip matplotlib
 ```
 
 Activate new environment, and install Picca. 
+```bash
+conda activate evn_name
+```
 
 To get the latest version in developer mode: 
 ```bash
@@ -19,14 +22,12 @@ pip install -e .
 
 Or with pip install:
 ```bash
-conda activate evn_name
-
 pip install picca
 ```
 
 Then install Vega:
 ```bash
-git clone https://github.com/andreicuceu/vega.git Vega
+git clone https://github.com/andreicuceu/vega.git
 
 cd vega
 
@@ -42,7 +43,7 @@ then install Polychord or PocoMC (see full Vega instructions here: https://githu
 
 To get the most up-to-date version of the bookkeper, clone the repo:
 ```bash
-git clone https://github.com/cramirezpe/picca_bookkeeper.git picca_bookkeeper
+git clone https://github.com/igmhub/picca_bookkeeper.git
 
 cd picca_bookkeeper
 
