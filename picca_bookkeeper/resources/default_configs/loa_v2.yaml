@@ -292,6 +292,9 @@ fits:
   rmax xcf:
 
   extra args:
+    smooth_covariance:
+      general:
+        correlation-types: auto auto cross cross  
     vega_auto:
       general:
         cuts:
