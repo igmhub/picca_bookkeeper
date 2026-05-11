@@ -58,6 +58,13 @@ Instructions:
             - "bookkeeper dir" -> your desired output path location
             - "defaults file" -> make sure this path matches your desired defaults.yaml
 
+        - Change arguments in defaults.yaml:
+            - If using file from NERSC, add the following under 'fits/extra args': 
+                smooth_covariance:
+                  general:
+                    correlation-types: auto auto cross cross  
+            - (ignore if using file from GitHub)
+
         - To run the full end-to-end analysis, use the following command in a terminal
           from your active conda environment:
             """
