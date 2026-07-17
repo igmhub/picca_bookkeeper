@@ -69,11 +69,9 @@ Instructions:
 
         - Copy the DR2 BAO baseline bookkeeper.yaml file
               GitHub: /Examples/configs/data/loa_BAO_baseline.yaml
-              NERSC: /global/cfs/cdirs/desi/science/lya/y3/loa/validation_tests/3-0-0-0/configs/baseline.yaml
 
         - Copy the DR2 BAO defaults.yaml file
               GitHub: /picca_bookkeeper/resources/default_configs/loa_v2.yaml
-              NERSC: /global/cfs/cdirs/desi/science/lya/y3/loa/validation_tests/3-0-0-0/configs/loa-3-0-0-0.yaml
 
         - Change arguments in bookkeeper_config.yaml:
             - "conda environment" -> the path to your own conda environment
@@ -126,11 +124,9 @@ Instructions:
 
         - Copy the DR2 FS baseline bookkeeper.yaml file
               GitHub: /Examples/configs/data/loa_FS_baseline.yaml
-              NERSC: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/configs/baseline.yaml
 
         - Copy the DR2 FS defaults.yaml file
               GitHub: /picca_bookkeeper/resources/default_configs/loa_fs_v8.yaml
-              NERSC: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/configs/loa_fs_v8.yaml
 
         - Change arguments in bookkeeper_config.yaml:
             - "conda environment" -> the path to your own conda environment
