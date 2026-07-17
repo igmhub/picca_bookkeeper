@@ -6,8 +6,6 @@ IMPORTANT!!
     This folder contains examples / instructions for reproducing the DR2 BAO
     and FS analyses.
 
-    NERSC access is required for the specified paths and directories.
-
 ###############################################################################
 
 Instructions:
