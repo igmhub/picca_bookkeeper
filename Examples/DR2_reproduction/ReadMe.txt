@@ -1,7 +1,7 @@
 ###############################################################################
 
 IMPORTANT!!
-    Updated: 5/8/2026
+    Updated: 7/17/2026
 
     This folder contains examples / instructions for reproducing the DR2 BAO
     and FS analyses.
@@ -18,6 +18,9 @@ Instructions:
         - Please see the home page ReadMe file for installation instructions
           for the picca_bookkeeper, as well as Picca, Vega, and Polychord /
           PocoMC if running the Sampler (not necessary for fitter alone).
+        - Note that you may need specific version of codes when running old 
+          analyses, see below for tagged version used in each. 
+
 
     Config File Set-up:
         - To run the bookkeeper, you will need 2 main files: bookkeeper_config.yaml,
@@ -44,6 +47,26 @@ Instructions:
 
 
     Reproducing DR2 BAO:
+        - Download the appropriate software versions:
+		  - picca_bookkeeper version: 5.1.3 (v5)
+		  - picca version: 9.12.0
+		  - vega version: 1.3.1
+	
+	  - If you have cloned the repositories, you can install the desired version 
+        to your conda environment by first using "git checkout v0.0.0", where 0.0.0 is 
+        the desired tagged version. E.g. for DR2 BAO, you will install the version 
+        used at the time using: 
+        e.g. picca: 
+		  - git clone https://github.com/igmhub/picca.git
+		  - cd picca
+		  - git checkout v9.12.0
+		  - pip install -e .
+		Or for the bookkeeper: 
+		  - git clone https://github.com/igmhub/picca_bookkeeper
+		  - cd picca_bookkeeper
+		  - git checkout v5
+		  - pip install -e .
+
         - Copy the DR2 BAO baseline bookkeeper.yaml file
               GitHub: /Examples/configs/data/loa_BAO_baseline.yaml
               NERSC: /global/cfs/cdirs/desi/science/lya/y3/loa/validation_tests/3-0-0-0/configs/baseline.yaml
@@ -81,6 +104,26 @@ Instructions:
 
 
     Reproducing DR2 Full-Shape:
+        - Download the appropriate software versions (picca, bookkeeper, vega)
+		  - picca_bookkeeper version: 6.0.1 (DR2_FS_v2)
+		  - Picca version: 9.19.0
+		  - vega version: 1.7.4
+	
+	  - If you have cloned the repositories, you can install the desired version 
+        to your conda environment by first using "git checkout v0.0.0", where 0.0.0 is 
+        the desired tagged version. E.g. for DR2 Full Shape, you will install the 
+        version used at the time using: 
+        e.g. picca: 
+            - git clone https://github.com/igmhub/picca.git
+    	    - cd picca
+    	    - git checkout v9.19.0
+    	    - pip install -e .
+    	Or for the bookkeeper: 
+            - git clone https://github.com/igmhub/picca_bookkeeper
+    	    - cd picca_bookkeeper
+            - git checkout DR2_FS_v2
+    	    - pip install -e .
+
         - Copy the DR2 FS baseline bookkeeper.yaml file
               GitHub: /Examples/configs/data/loa_FS_baseline.yaml
               NERSC: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/configs/baseline.yaml
