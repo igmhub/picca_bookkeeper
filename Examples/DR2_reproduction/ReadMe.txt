@@ -48,7 +48,7 @@ Instructions:
 
     Reproducing DR2 BAO:
         - Download the appropriate software versions:
-		  - picca_bookkeeper version: 5.1.3 (v5)
+		  - picca_bookkeeper version: 5.1.3 (DR2_FS)
 		  - picca version: 9.12.0
 		  - vega version: 1.3.1
 	
@@ -64,7 +64,7 @@ Instructions:
 		Or for the bookkeeper: 
 		  - git clone https://github.com/igmhub/picca_bookkeeper
 		  - cd picca_bookkeeper
-		  - git checkout v5
+		  - git checkout DR2_FS
 		  - pip install -e .
 
         - Copy the DR2 BAO baseline bookkeeper.yaml file
