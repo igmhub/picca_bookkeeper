@@ -48,6 +48,8 @@ Instructions:
         - Download the appropriate software versions:
 		  - picca_bookkeeper version: 5.1.3 (DR2_FS)
 		  - picca version: 9.12.0
+            - note: you will need to downgrade setup tools for backwards compatibility:
+				"pip install "setuptools<81"
 		  - vega version: 1.3.1
 	
 	  - If you have cloned the repositories, you can install the desired version 
