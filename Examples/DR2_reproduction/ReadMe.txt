@@ -1,7 +1,7 @@
 ###############################################################################
 
 IMPORTANT!!
-    Updated: 7/17/2026
+    Updated: 8/21/2026
 
     This folder contains examples / instructions for reproducing the DR2 BAO
     and FS analyses.
