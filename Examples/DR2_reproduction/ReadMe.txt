@@ -89,16 +89,64 @@ Instructions:
         - To run the full end-to-end analysis, use the following command in a terminal
           from your active conda environment:
             """
-            picca_bookkeeper_run_full_analysis /path_to/bookkeeper_conifg.yaml
+            picca_bookkeeper_run_full_analysis /path_to/bookkeeper_conifg.yaml --only-write
             """
 
         - This will write all config files and schedule jobs for Picca and Vega,
-          from delta extraction to the final fit.
-        - Suggestion: use "--only-write" in the above command, to write all files
-          without submitting jobs. This is useful to check that config files and
-          paths are correct before submitting as batch jobs.
-        - Compare but DO NOT change config files and output to the DR2 BAO analysis at
-          NERSC: /global/cfs/cdirs/desi/science/lya/y3/loa/validation_tests/3-0-0-0/baseline
+          from delta extraction to the final fit, but not run them. 
+          This is useful to check that config files and paths are correct before 
+          submitting as batch jobs.
+        - Before submitting the jobs, you will need to manually update the write 
+          and smooth covariance scripts to ensure backwards compatibility. 
+		- In "run_write_full_covariance.sh" located under /fits/scripts/, change 
+			"""
+			picca_write_full_covariance.py
+			"""
+			to 
+			"""
+			/global/cfs/cdirs/desicollab/science/lya/y1-kp6/iron-tests/correlations/scripts/write_full_covariance_matrix_flex_size.py
+			"""
+			You will also need to add "--lya-lya", "--lya-lyb", "--lya-qso", 
+            and "--lyb-qso" before the corresponding fits.gz files. For example, 
+            in front of "/.../lyalya_lyalya.fits.gz", add "--lya-lya". 
+            Similarly, before "/.../qso_lyalyb.fits.gz", add "--lyb-qso". 
+		- In "run_smooth_covariance.sh" located under /fits/scripts/, change 
+			"""
+			picca_write_smooth_covariance.py
+			"""
+			to 
+			"""
+			/global/cfs/cdirs/desicollab/science/lya/y1-kp6/iron-tests/correlations/scripts/write_smooth_covariance_flex_size.py
+			"""
+			and change
+			"""
+			--correlation-types
+			"""
+			to
+			"""
+			--block-types
+			"""
+            
+        - Once you have made these necessary changes, you can submit the jobs. 
+          Because of backwards compatibility issues, it is recommended to do this
+          manually rather than using the bookkeeper's scheduling. You can submit 
+		  batch jobs using "--sbatch" from the terminal.
+          For example: 
+              """
+              sbatch /...deltas/scripts/run_delta_extraction_ciii_calib_step_1.sh
+              """
+          
+          The order that the jobs should be submitted in are as follows: 
+            1) Deltas: ciii calib, lya + lyb
+            2) Correlations: cf lyalya + cf lyalyb + xcf lyaqso + xcf lybqso
+            3) Distortions: dmat lyalya + dmat lyalyb, xdmat qsolya + xdmat qsolyb
+            4) Export CF and XCF
+            5) Covariance: write, smooth
+            6) Fit
+
+        - You can compare but DO NOT change config files and output to the DR2 BAO analysis at
+          NERSC: /global/cfs/cdirs/desi/science/lya/y3/loa/validation_tests/3-0-0-0/baseline/
+
 
 
     Reproducing DR2 Full-Shape:
@@ -146,4 +194,4 @@ Instructions:
           without submitting jobs. This is useful to check that config files and
           paths are correct before submitting as batch jobs.
         - Compare but DO NOT change config files and output to the DR2 FS analysis at
-          NERSC: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/baseline
+          NERSC: /global/cfs/cdirs/desi/science/lya/y3-fs/validation-tests/v1-4-0-0/baseline/
