@@ -16,8 +16,9 @@ Instructions:
         - Please see the home page ReadMe file for installation instructions
           for the picca_bookkeeper, as well as Picca, Vega, and Polychord /
           PocoMC if running the Sampler (not necessary for fitter alone).
-        - Note that you may need specific version of codes when running old 
-          analyses, see below for tagged version used in each. 
+        - Note that you may need specific version of these codes when 
+		  reproducing / running old analyses, so see below for details of 
+		  package versions used in each. 
 
 
     Config File Set-up:
