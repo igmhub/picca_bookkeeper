@@ -1,7 +1,7 @@
 ###############################################################################
 
 IMPORTANT!!
-    Updated: 8/21/2026
+    Updated: 8/24/2026
 
     This folder contains examples / instructions for reproducing the DR2 BAO
     and FS analyses.
@@ -51,6 +51,8 @@ Instructions:
             - note: you will need to downgrade setup tools for backwards compatibility:
 				"pip install "setuptools<81"
 		  - vega version: 1.3.1
+            - note: you will also need to downgrade scipy for backwards compatibility: 
+                "pip install scipy=1.4.1"
 	
 	  - If you have cloned the repositories, you can install the desired version 
         to your conda environment by first using "git checkout v0.0.0", where 0.0.0 is 
