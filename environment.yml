@@ -1,0 +1,32 @@
+name: picca_bookkeeper
+
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - python=3.13
+  - pip
+  - setuptools
+  - wheel
+  - numpy=2.3.*
+  - scipy=1.16.*
+  - astropy=6.1.*
+  - matplotlib>=3.10
+  - pandas=2.2.*
+  - h5py
+  - numba
+  - llvmlite
+  - fitsio
+  - healpy
+  - iminuit
+  - gitpython
+  - pyyaml
+  - camb
+  - future
+  - pip:
+      - getdist>=1.6.4
+      - mcfit
+      - cachetools
+      - tabulate
+      - importlib-resources
