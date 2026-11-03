@@ -28,8 +28,7 @@ delta extraction:
   extra args:
     picca_delta_extraction:
       general:
-        general:
-          num processors: 128
+        num processors: 128
   slurm args:
     picca_delta_extraction:
       general:
