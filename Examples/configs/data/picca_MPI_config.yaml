@@ -1,0 +1,55 @@
+
+### Software Versions: ###
+# picca_bookkeeper: 6.0.1
+# picca: 9.21.4
+# vega: 1.8.1
+
+general:
+  # conda environment: /path_to_conda_env/
+  system: slurm_perlmutter
+  slurm args:
+    mail-type: fail
+    # mail-user: your_email.edu
+  # defaults file: DR3_dev1
+
+data:
+  # bookkeeper dir: /output_path/
+  healpix data: /global/cfs/cdirs/desi/spectro/redux/loa/healpix/
+  catalog: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
+
+delta extraction:
+  use qsonic: False
+  calib: 1
+  calib region: ciii
+  dla: /global/cfs/cdirs/desi/users/mwolfson/DLA_cat/gpp_251202_new_baseline.fits
+  bal: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
+  mask file: /global/cfs/cdirs/desi/science/lya/y3/loa/deltas/delta-lya-3-0/continuum_fitting_mask.txt
+  extra args:
+    picca_delta_extraction:
+      general:
+        data:
+          type: DesiHealpixMpi
+          num processors: 1
+        expected flux:
+          # type: Dr16ExpectedFluxMpi
+          type: Dr16FixedFudgeExpectedFluxMpi
+          num processors: 1
+  slurm args:
+    picca_delta_extraction:
+      general:
+        nodes: 2
+        ntasks: 64
+        ntasks-per-node: 32
+        cpus-per-task: 1
+        OMP_NUM_THREADS: 1
+      ciii:
+        time: '04:00:00'
+        cpus-per-task: $
+      lya:
+        time: '02:00:00'
+      lyb:
+        time: '00:30:00'
+
+correlations: {}
+
+fits: {}

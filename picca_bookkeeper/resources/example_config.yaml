@@ -16,7 +16,7 @@ general:
     mail-type: fail
     mail-user: user@host.com
 
-  defaults file: # Use a defaults file like Y1v7
+  defaults file: # Use a defaults file like loa_fs_v8.yaml
   # defaults locaed in picca_bookkeeper/resources/default_configs
 
 data:
@@ -33,6 +33,12 @@ delta extraction:
   # If full delta extraction already computed can use this to always point to it
   # use existing: /path/to/bookkeeper (bookkeeper folder)
   # (then pass --skip-sent option in terminal)
+
+  # Optional, can use qsonic or picca for delta extraction
+  use qsonic: True
+  # options: 
+  #   True: uses qsonic for delta extraction
+  #   False: uses picca for delta extraction (default)
 
   # Calibration mode for delta extraction.
   calib: 0
@@ -82,9 +88,15 @@ delta extraction:
     picca_delta_extraction:
       # Default value for all regions
       general:
+        data:
+          type: DesiHealpix 
+          # note: DesiHealpixMpi for picca mpi
+          num processors: 128 #note: 128 default, use e.g. 64 for picca mpi
         expected flux:
           type: Dr16FixedFudgeExpectedFlux 
+          # note: Dr16FixedFudgeExpectedFluxMpi for picca mpi
           fudge value: 0 # This to deactivate fudge.
+          num processors: 128 #note: 128 default, use e.g. 64 for picca mpi
         data:
           wave solution: lin # Example, wave solution already lin by default (options: lin, log, etc).
 
@@ -112,6 +124,14 @@ delta extraction:
       general:
         time: "00:16:00"
         qos: debug
+
+        # Below is an example setup for using picca MPI
+        # exclude for qsonic or picca default delta extraction
+        nodes: 2
+        ntasks: 64
+        ntasks-per-node: 32
+        cpus-per-task: 1
+        OMP_NUM_THREADS: 1
 
 correlations:
   # If full correlations already computed can use this to always point to it
@@ -203,7 +223,7 @@ fits:
   # These are the correlations to use. If running the full analysis, 
   # the correspondent deltas and correlations will be computed
   auto correlations: lya.lya-lya.lya lya.lya-lya.lyb
-  cross correlations: qso-lya.lya 
+  cross correlations: qso-lya.lya qso-lya.lyb
 
   # Whether to use a different environment for sampler. If empty, the general
   # environment will be used. The one below is mantained by Andrei Cuceu.
