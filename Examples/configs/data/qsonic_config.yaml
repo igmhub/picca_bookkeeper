@@ -1,0 +1,43 @@
+general:
+  conda environment: /global/homes/m/mherbold/.conda/envs/temp_bookkeeper
+  system: slurm_perlmutter
+  slurm args:
+    mail-type: fail
+    mail-user: herbold.9@osu.edu
+  defaults file: DR3_dev1
+
+data:
+  bookkeeper dir: /pscratch/sd/m/mherbold/tests/qsonic_bookkeeper_test/output/
+  healpix data: /global/cfs/cdirs/desi/spectro/redux/loa/healpix/
+  catalog: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
+
+delta extraction:
+  use qsonic: True
+  calib: 1
+  calib region: ciii
+  dla: /global/cfs/cdirs/desi/users/mwolfson/DLA_cat/gpp_251202_new_baseline.fits
+  bal: /global/cfs/cdirs/desi/users/martini/bal-catalogs/loa/QSO_cat_loa_main_dark_healpix_v3-altbal.fits
+  mask file: /global/cfs/cdirs/desi/science/lya/y3/loa/deltas/delta-lya-3-0/continuum_fitting_mask.txt
+  # picca_delta_extraction num processors should match ntasks-per-node
+  extra args:
+    picca_delta_extraction:
+      general:
+        general:
+          num processors: 128
+  slurm args:
+    picca_delta_extraction:
+      general:
+        time: 00:30:00
+        qos: regular
+        cpus-per-task: 2
+        ntasks-per-node: 128
+      ciii:
+        time: 00:30:00
+      lya:
+        time: 00:30:00
+      lyb:
+        time: 00:30:00
+
+correlations: {}
+
+fits: {}
