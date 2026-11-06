@@ -318,6 +318,14 @@ class Bookkeeper:
         return qsonic_command, srun_args
 
     @staticmethod
+    def validate_profile(profile: str) -> str:
+        if profile not in ("cpu", "gpu"):
+            raise ValueError(
+                f"Invalid profile {profile!r}; expected 'cpu' or 'gpu'."
+            )
+        return profile
+
+    @staticmethod
     def write_bookkeeper(config: Dict, file: Path | str) -> None:
         """
         Write a validated bookkeeper YAML configuration file to file.
@@ -1498,6 +1506,7 @@ class Bookkeeper:
         absorber: str = "lya",
         absorber2: Optional[str] = None,
         system: Optional[str] = None,
+        profile: str = "cpu",
         debug: bool = False,
         wait_for: Optional[Tasker | ChainedTasker | int | List[int]] = None,
         overwrite: bool = False,
@@ -1526,6 +1535,7 @@ class Bookkeeper:
                         (default: False).
             skip_sent (bool): If True, skip and return a DummyTasker if output
                         already exists (default: False).
+            profile (str): Execution profile, either "cpu" or "gpu".
 
         Returns:
             Tasker: A Tasker object configured to run the forest correlation
@@ -1546,6 +1556,9 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
+        
+        profile = self.validate_profile(profile)
+
         region2 = region if region2 is None else region2
         region2 = self.validate_region(region2)
         region = self.validate_region(region)
@@ -1616,6 +1629,12 @@ class Bookkeeper:
             slurm_header_args, updated_slurm_header_extra_args
         )
 
+        slurm_header_args = self.apply_profile_slurm_args(
+            slurm_header_args=slurm_header_args,
+            profile=profile,
+            command=command,
+        )
+
         args = {
             "in-dir": str(self.paths.deltas_path(region).resolve()),
             "out": str(output_filename),
@@ -1629,6 +1648,12 @@ class Bookkeeper:
             args["in-dir2"] = str(self.paths.deltas_path(region2).resolve())
 
         args = DictUtils.merge_dicts(args, updated_extra_args)
+
+        args = self.apply_profile_args(
+            args=args,
+            profile=profile,
+            command=command,
+        )
 
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
@@ -1667,6 +1692,7 @@ class Bookkeeper:
         absorber: str = "lya",
         absorber2: Optional[str] = None,
         system: Optional[str] = None,
+        profile: str = "cpu",
         debug: bool = False,
         wait_for: Optional[Tasker | ChainedTasker | int | List[int]] = None,
         overwrite: bool = False,
@@ -1697,6 +1723,7 @@ class Bookkeeper:
                         (default: False).
             skip_sent (bool): If True, skip and return a DummyTasker if output
                         already exists (default: False).
+            profile (str): Execution profile, either "cpu" or "gpu".
 
         Returns:
             Tasker: A Tasker object configured to run the distortion matrix
@@ -1717,6 +1744,9 @@ class Bookkeeper:
                 f"values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
+
+        profile = self.validate_profile(profile)
+
         region2 = region if region2 is None else region2
         region2 = self.validate_region(region2)
         region = self.validate_region(region)
@@ -1787,6 +1817,12 @@ class Bookkeeper:
             slurm_header_args, updated_slurm_header_extra_args
         )
 
+        slurm_header_args = self.apply_profile_slurm_args(
+            slurm_header_args=slurm_header_args,
+            profile=profile,
+            command=command,
+        )
+
         args = {
             "in-dir": str(self.paths.deltas_path(region).resolve()),
             "out": str(output_filename),
@@ -1800,6 +1836,12 @@ class Bookkeeper:
             args["in-dir2"] = str(self.paths.deltas_path(region2).resolve())
 
         args = DictUtils.merge_dicts(args, updated_extra_args)
+
+        args = self.apply_profile_args(
+            args=args,
+            profile=profile,
+            command=command,
+        )
 
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
@@ -2029,6 +2071,7 @@ class Bookkeeper:
         absorber: str = "lya",
         absorber2: Optional[str] = None,
         system: Optional[str] = None,
+        profile: str = "cpu",
         debug: bool = False,
         wait_for: Optional[Tasker | ChainedTasker | int | List[int]] = None,
         overwrite: bool = False,
@@ -2059,6 +2102,7 @@ class Bookkeeper:
                         (default: False).
             skip_sent (bool): If True, skip and return a DummyTasker if output
                         already exists (default: False).
+            profile (str): Execution profile, either "cpu" or "gpu".
 
         Returns:
             Tasker: Configured Tasker object to run metal distortion matrix
@@ -2079,6 +2123,9 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
+
+        profile = self.validate_profile(profile)
+
         region2 = region if region2 is None else region2
         region2 = self.validate_region(region2)
         region = self.validate_region(region)
@@ -2127,6 +2174,12 @@ class Bookkeeper:
             fast_metal = False
             command = "picca_metal_dmat.py"
 
+        if profile == "gpu" and fast_metal:
+            raise ValueError(
+                "The gpu profile requires fast metals to be disabled because "
+                "picca_fast_metal_dmat.py is CPU-only."
+            )
+
         updated_extra_args = self.generate_extra_args(
             config=self.config,
             section="correlations",
@@ -2156,6 +2209,12 @@ class Bookkeeper:
             slurm_header_args, updated_slurm_header_extra_args
         )
 
+        slurm_header_args = self.apply_profile_slurm_args(
+            slurm_header_args=slurm_header_args,
+            profile=profile,
+            command=command,
+        )
+
         args = {}
 
         if fast_metal:
@@ -2182,6 +2241,12 @@ class Bookkeeper:
 
         args = DictUtils.merge_dicts(args, updated_extra_args)
 
+        args = self.apply_profile_args(
+            args=args,
+            profile=profile,
+            command=command,
+        )
+        
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
                 slurm_header_args,
@@ -2216,6 +2281,7 @@ class Bookkeeper:
         absorber: str = "lya",
         tracer: str = "qso",
         system: Optional[str] = None,
+        profile: str = "cpu",
         debug: bool = False,
         wait_for: Optional[Tasker | ChainedTasker | int | List[int]] = None,
         overwrite: bool = False,
@@ -2244,6 +2310,7 @@ class Bookkeeper:
                         (default: False).
             skip_sent (bool): If True, skip and return a DummyTasker if output
                         already exists (default: False).
+            profile (str): Execution profile, either "cpu" or "gpu".
 
         Returns:
             Tasker: Configured Tasker object to run forest-quasar
@@ -2264,6 +2331,9 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
+        
+        profile = self.validate_profile(profile)
+
         region = self.validate_region(region)
         absorber = self.validate_absorber(absorber)
 
@@ -2327,6 +2397,12 @@ class Bookkeeper:
             slurm_header_args, updated_slurm_header_extra_args
         )
 
+        slurm_header_args = self.apply_profile_slurm_args(
+            slurm_header_args=slurm_header_args,
+            profile=profile,
+            command=command,
+        )
+
         drq = self.paths.get_tracer_catalog(tracer)
 
         args = {
@@ -2337,6 +2413,12 @@ class Bookkeeper:
         }
 
         args = DictUtils.merge_dicts(args, updated_extra_args)
+
+        args = self.apply_profile_args(
+            args=args,
+            profile=profile,
+            command=command,
+        )
 
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
@@ -2373,6 +2455,7 @@ class Bookkeeper:
         absorber: str = "lya",
         tracer: str = "qso",
         system: Optional[str] = None,
+        profile: str = "cpu",
         debug: bool = False,
         wait_for: Optional[Tasker | ChainedTasker | int | List[int]] = None,
         overwrite: bool = False,
@@ -2402,6 +2485,7 @@ class Bookkeeper:
                         (default: False).
             skip_sent (bool): If True, skip and return a DummyTasker if output
                         already exists (default: False).
+            profile (str): Execution profile, either "cpu" or "gpu".
 
         Returns:
             Tasker: Configured Tasker object to run the forest-quasar distortion
@@ -2422,6 +2506,9 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
+        
+        profile = self.validate_profile(profile)
+            
         region = self.validate_region(region)
         absorber = self.validate_absorber(absorber)
 
@@ -2485,6 +2572,12 @@ class Bookkeeper:
             slurm_header_args, updated_slurm_header_extra_args
         )
 
+        slurm_header_args = self.apply_profile_slurm_args(
+            slurm_header_args=slurm_header_args,
+            profile=profile,
+            command=command,
+        )
+
         drq = self.paths.get_tracer_catalog(tracer)
 
         args = {
@@ -2496,6 +2589,12 @@ class Bookkeeper:
 
         args = DictUtils.merge_dicts(args, updated_extra_args)
 
+        args = self.apply_profile_args(
+            args=args,
+            profile=profile,
+            command=command,
+        )
+        
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
                 slurm_header_args, dict(qos="debug", time="00:30:00")
@@ -2707,6 +2806,7 @@ class Bookkeeper:
         absorber: str = "lya",
         tracer: str = "qso",
         system: Optional[str] = None,
+        profile: str = "cpu",
         debug: bool = False,
         wait_for: Optional[Tasker | ChainedTasker | int | List[int]] = None,
         overwrite: bool = False,
@@ -2736,6 +2836,7 @@ class Bookkeeper:
                         (default: False).
             skip_sent (bool): If True, skip and return a DummyTasker if output
                         already exists (default: False).
+            profile (str): Execution profile, either "cpu" or "gpu".
 
         Returns:
             Tasker: Configured Tasker object to run forest-quasar metal distortion
@@ -2748,6 +2849,9 @@ class Bookkeeper:
         if self.read_mode:
             raise ValueError(
                 "Initialize bookkeeper without read_mode to run jobs.")
+
+        profile = self.validate_profile(profile)
+
         region = self.validate_region(region)
         absorber = self.validate_absorber(absorber)
         job_name = f"xmetal_{tracer}_{absorber}{region}"
@@ -2797,6 +2901,12 @@ class Bookkeeper:
             fast_metal = False
             command = "picca_metal_xdmat.py"
 
+        if profile == "gpu" and fast_metal:
+            raise ValueError(
+                "The gpu profile requires fast metals to be disabled because "
+                "picca_fast_metal_dmat.py is CPU-only."
+            )
+
         updated_extra_args = self.generate_extra_args(
             config=self.config,
             section="correlations",
@@ -2824,6 +2934,12 @@ class Bookkeeper:
             slurm_header_args, updated_slurm_header_extra_args
         )
 
+        slurm_header_args = self.apply_profile_slurm_args(
+            slurm_header_args=slurm_header_args,
+            profile=profile,
+            command=command,
+        )
+
         drq = self.paths.get_tracer_catalog(tracer)
 
         args = {}
@@ -2840,6 +2956,12 @@ class Bookkeeper:
         args["lambda-abs"] = absorber_igm[absorber]
 
         args = DictUtils.merge_dicts(args, updated_extra_args)
+
+        args = self.apply_profile_args(
+            args=args,
+            profile=profile,
+            command=command,
+        )
 
         environmental_variables = {
             "HDF5_USE_FILE_LOCKING": "FALSE",
