@@ -8,8 +8,8 @@ commands:
     slurm:
       constraint: gpu
       gpus: 4
-      cpus-per-task: 32
-      time: "01:00:00"
+      cpus-per-task: 64
+      time: "00:30:00"
 
   picca_xcf.py:
     args:
@@ -17,38 +17,38 @@ commands:
     slurm:
       constraint: gpu
       gpus: 4
-      cpus-per-task: 32
-      time: "01:00:00"
+      cpus-per-task: 64
+      time: "00:30:00"
 
   picca_dmat.py:
     args:
       gpu: ""
-      seed-per-healpix: ""
+      # seed-per-healpix: ""
     slurm:
       constraint: gpu
       gpus: 4
-      cpus-per-task: 32
+      cpus-per-task: 64
       time: "01:00:00"
 
   picca_xdmat.py:
     args:
       gpu: ""
-      seed-per-healpix: ""
+      # seed-per-healpix: ""
     slurm:
       constraint: gpu
       gpus: 4
-      cpus-per-task: 32
-      time: "01:00:00"
+      cpus-per-task: 64
+      time: "00:30:00"
 
   picca_metal_dmat.py:
     args:
       gpu: ""
-      seed-per-healpix: ""
+      # seed-per-healpix: ""
     slurm:
       constraint: gpu
       gpus: 4
-      cpus-per-task: 32
-      time: "01:00:00"
+      cpus-per-task: 64
+      time: "02:00:00"
 
   picca_metal_xdmat.py:
     args: {}
