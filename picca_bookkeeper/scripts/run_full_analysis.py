@@ -134,10 +134,13 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
                 skip_sent=True,
                 log_level="INFO",
                 debug=False,
+                profile=profile,
         ))
     """
     if args is None:
         args = get_args()
+
+    profile = getattr(args, "profile", "cpu")
 
     level = logging.getLevelName(args.log_level)
     logging.basicConfig(
@@ -258,6 +261,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
                 log_level=args.log_level,
                 overwrite=args.overwrite,
                 skip_sent=args.skip_sent,
+                profile=profile,
             )
             run_cf(auto_args)
 
@@ -277,6 +281,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
                 log_level=args.log_level,
                 overwrite=args.overwrite,
                 skip_sent=args.skip_sent,
+                profile=profile,
             )
             run_xcf(cross_args)
 
@@ -317,6 +322,7 @@ def get_args() -> argparse.Namespace:
     Returns:
     --------
         argparse.Namespace: Namespace containing parsed arguments with attributes:
+            --profile: Specify whether to use CPU / GPU for CF and Dmats (default = CPU)
             - bookkeeper_config (Path): Path to the bookkeeper YAML/JSON file.
             - system (str, optional): Job system (e.g., "slurm", "local").
             - overwrite (bool): Whether to overwrite existing output data.
@@ -346,6 +352,14 @@ def get_args() -> argparse.Namespace:
         PosixPath('myconfig.yaml')
     """
     parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--profile",
+        choices=["cpu", "gpu"],
+        default="cpu",
+        help="Select the execution profile (default: cpu).",
+    )
+    
     parser.add_argument(
         "bookkeeper_config", type=Path, help="Path to bookkeeper file to use"
     )

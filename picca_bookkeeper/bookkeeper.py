@@ -29,6 +29,7 @@ try:
     from importlib_resources import files
 except ModuleNotFoundError:
     from importlib.resources import files
+
 from yaml import SafeDumper
 from os import getenv as os_getenv
 
@@ -324,6 +325,19 @@ class Bookkeeper:
                 f"Invalid profile {profile!r}; expected 'cpu' or 'gpu'."
             )
         return profile
+
+    @staticmethod
+    def load_profile(profile: str) -> Dict:
+        profile = Bookkeeper.validate_profile(profile)
+    
+        profile_file = (
+            files(resources)
+            .joinpath("profiles")
+            .joinpath(f"{profile}.yaml")
+        )
+    
+        with profile_file.open("r", encoding="utf-8") as file:
+            return yaml.safe_load(file)
 
     @staticmethod
     def write_bookkeeper(config: Dict, file: Path | str) -> None:
@@ -707,6 +721,32 @@ class Bookkeeper:
                 )
 
         return DictUtils.remove_dollar(args)
+
+    def apply_profile_args(
+        self,
+        args: Dict,
+        profile: str,
+        command: str,
+    ) -> Dict:
+        """Apply profile-specific command-line arguments."""
+        profile_config = self.load_profile(profile)
+        command_config = profile_config.get("commands", {}).get(command, {})
+        profile_args = command_config.get("args", {})
+
+        return DictUtils.merge_dicts(args, profile_args)
+
+    def apply_profile_slurm_args(
+        self,
+        slurm_header_args: Dict,
+        profile: str,
+        command: str,
+    ) -> Dict:
+        """Apply profile-specific SLURM header arguments."""
+        profile_config = self.load_profile(profile)
+        command_config = profile_config.get("commands", {}).get(command, {})
+        profile_slurm_args = command_config.get("slurm", {})
+
+        return DictUtils.merge_dicts(slurm_header_args, profile_slurm_args)
 
     def generate_system_arg(self, system: Optional[str]) -> str:
         """
@@ -1556,7 +1596,7 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
-        
+
         profile = self.validate_profile(profile)
 
         region2 = region if region2 is None else region2
@@ -2246,7 +2286,7 @@ class Bookkeeper:
             profile=profile,
             command=command,
         )
-        
+
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
                 slurm_header_args,
@@ -2331,7 +2371,7 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
-        
+
         profile = self.validate_profile(profile)
 
         region = self.validate_region(region)
@@ -2506,9 +2546,9 @@ class Bookkeeper:
                 "values\\). Defaults diff:\n\n"
                 f"{DictUtils.print_dict(self.defaults_diff)}"
             )
-        
+
         profile = self.validate_profile(profile)
-            
+
         region = self.validate_region(region)
         absorber = self.validate_absorber(absorber)
 
@@ -2594,7 +2634,7 @@ class Bookkeeper:
             profile=profile,
             command=command,
         )
-        
+
         if debug:  # pragma: no cover
             slurm_header_args = DictUtils.merge_dicts(
                 slurm_header_args, dict(qos="debug", time="00:30:00")
@@ -3250,14 +3290,14 @@ class Bookkeeper:
             section="fits",
             command=command,
         )
-        
+
         # pull sampler CLI flags from config
         updated_extra_args = self.generate_extra_args(
             config=self.config,
             section="fits",
             command=command,
         )
-    
+
         slurm_header_args = {
             "job-name": job_name,
             "output": str(self.paths.fits_path / f"logs/{job_name}-%j.out"),
@@ -3963,7 +4003,7 @@ class Bookkeeper:
             #args[f"{region}-{region2}"] = str(
                 # self.paths.cf_fname("lya", region, "lya", region2).resolve()
             # )
-            
+
         for cross_correlation in cross_correlations:
             (
                 tracer,
@@ -3984,7 +4024,7 @@ class Bookkeeper:
             correlations.append(str(
                 self.paths.xcf_fname(absorber, region, tracer).resolve()
             ))
-            
+
         # Now slurm args
         args['correlations'] = " ".join(correlations)
         command = "write_full_covariance.py"
