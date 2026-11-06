@@ -1,0 +1,63 @@
+name: gpu
+description: GPU-enabled picca correlation profile
+
+commands:
+  picca_cf.py:
+    args:
+      gpu: ""
+    slurm:
+      constraint: gpu
+      gpus: 4
+      cpus-per-task: 32
+      time: "01:00:00"
+
+  picca_xcf.py:
+    args:
+      gpu: ""
+    slurm:
+      constraint: gpu
+      gpus: 4
+      cpus-per-task: 32
+      time: "01:00:00"
+
+  picca_dmat.py:
+    args:
+      gpu: ""
+      seed-per-healpix: ""
+    slurm:
+      constraint: gpu
+      gpus: 4
+      cpus-per-task: 32
+      time: "01:00:00"
+
+  picca_xdmat.py:
+    args:
+      gpu: ""
+      seed-per-healpix: ""
+    slurm:
+      constraint: gpu
+      gpus: 4
+      cpus-per-task: 32
+      time: "01:00:00"
+
+  picca_metal_dmat.py:
+    args:
+      gpu: ""
+      seed-per-healpix: ""
+    slurm:
+      constraint: gpu
+      gpus: 4
+      cpus-per-task: 32
+      time: "01:00:00"
+
+  picca_metal_xdmat.py:
+    args: {}
+    slurm: {}
+
+  picca_fast_metal_dmat.py:
+    args: {}
+    slurm: {}
+
+  picca_fast_metal_xdmat.py:
+    args: {}
+    slurm: {}
