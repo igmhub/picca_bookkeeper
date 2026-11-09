@@ -1,5 +1,6 @@
 name: gpu
 description: GPU-enabled picca correlation profile
+# adjust time after test run
 
 commands:
   picca_cf.py:
@@ -9,7 +10,7 @@ commands:
       constraint: gpu
       gpus: 4
       cpus-per-task: 64
-      time: "00:30:00"
+      time: "00:10:00"
 
   picca_xcf.py:
     args:
@@ -18,7 +19,7 @@ commands:
       constraint: gpu
       gpus: 4
       cpus-per-task: 64
-      time: "00:30:00"
+      time: "00:20:00"
 
   picca_dmat.py:
     args:
@@ -28,7 +29,7 @@ commands:
       constraint: gpu
       gpus: 4
       cpus-per-task: 64
-      time: "01:00:00"
+      time: "00:30:00"
 
   picca_xdmat.py:
     args:
