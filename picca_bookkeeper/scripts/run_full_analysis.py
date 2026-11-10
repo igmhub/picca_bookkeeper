@@ -44,11 +44,13 @@ Key command-line arguments:
     --wait-for ...          : Wait for specific job IDs before running.
     --log-level LEVEL       : Set logging verbosity (default: INFO).
     --debug                 : Enable debug mode.
+    --profile               : Specify whether to use CPU / GPU for CF and Dmats (default = CPU)
+
 
 Example:
 --------
-    python run_full_analysis.py myconfig.yaml --auto-correlations lya.lya-lya.lyb
-    --no-fits --log-level DEBUG
+    python run_full_analysis.py my_config.yaml --skip-sent --only-write 
+    --no-fits --profile gpu
 
 Interactions:
 -------------
