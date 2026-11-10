@@ -18,7 +18,7 @@ umask 0002
 
 
 
-echo used picca_bookkeeper version: x.xx
+echo used picca_bookkeeper version: 6.0.1
 echo using picca version: $(python3 -m picca_bookkeeper.get_version picca)
 echo -e '\n'
 
