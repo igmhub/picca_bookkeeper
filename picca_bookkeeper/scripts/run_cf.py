@@ -40,6 +40,7 @@ Main CLI Arguments:
     - --only-write: Only write job scripts, do not submit.
     - --wait-for: Specify job IDs to wait for before running jobs.
     - --log-level: Set logging verbosity.
+    - --profile: Select the execution profile (`cpu` or `gpu`).
 
 Interactions:
 -------------
@@ -116,6 +117,8 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
     if args is None:
         args = get_args()
 
+    profile = getattr(args, "profile", "cpu")
+
     bookkeeper = Bookkeeper(
         args.bookkeeper_config,
         overwrite_config=args.overwrite_config,
@@ -139,6 +142,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
         absorber=args.absorber,
         absorber2=args.absorber2,
         system=args.system,
+        profile=profile,
         debug=args.debug,
         wait_for=args.wait_for,
         overwrite=args.overwrite,
@@ -166,6 +170,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
             absorber=args.absorber,
             absorber2=args.absorber2,
             system=args.system,
+            profile=profile,
             wait_for=args.wait_for,
             debug=args.debug,
             overwrite=args.overwrite,
@@ -199,6 +204,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
             absorber=args.absorber,
             absorber2=args.absorber2,
             system=args.system,
+            profile=profile,
             debug=args.debug,
             wait_for=args.wait_for,
             overwrite=args.overwrite,
@@ -266,6 +272,7 @@ def get_args() -> argparse.Namespace:
             - only_write (bool): Only write job scripts; do not submit them.
             - wait_for (List[int] | None): SLURM job IDs this job should wait for.
             - log_level (str): Logging verbosity level.
+            - profile (str): Execution profile (GPU or CPU). Defaults to "cpu".
 
     Example:
     --------
@@ -296,6 +303,13 @@ def get_args() -> argparse.Namespace:
         default=None,
     )
 
+    parser.add_argument(
+        "--profile",
+        choices=["cpu", "gpu"],
+        default="cpu",
+        help="Select the execution profile (default: cpu).",
+    )
+    
     parser.add_argument(
         "--overwrite", action="store_true", help="Force overwrite output data."
     )

@@ -17,7 +17,7 @@ umask 0002
 
 
 
-echo used picca_bookkeeper version: x.xx
+echo used picca_bookkeeper version: 6.0.1
 echo using vega version: $(python3 -m picca_bookkeeper.get_version vega)
 echo -e '\n'
 

@@ -1,0 +1,27 @@
+name: cpu
+description: Existing CPU execution profile
+
+commands:
+  picca_cf.py:
+    args: {}
+    slurm: {}
+
+  picca_xcf.py:
+    args: {}
+    slurm: {}
+
+  picca_dmat.py:
+    args: {}
+    slurm: {}
+
+  picca_xdmat.py:
+    args: {}
+    slurm: {}
+
+  picca_metal_dmat.py:
+    args: {}
+    slurm: {}
+
+  picca_metal_xdmat.py:
+    args: {}
+    slurm: {}

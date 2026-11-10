@@ -50,6 +50,7 @@ Optional arguments:
     --wait-for <int ...>  : List of job IDs to wait for before submitting.
     --log-level <LEVEL>   : Set logging level (CRITICAL, ERROR, WARNING, INFO,
                             DEBUG, NOTSET). Default: INFO.
+    --profile <cpu|gpu>     : Select the execution profile. Default: cpu.
 
 Example:
 --------
@@ -127,6 +128,8 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
     if args is None:
         args = get_args()
 
+    profile = getattr(args, "profile", "cpu")
+
     level = logging.getLevelName(args.log_level)
     logging.basicConfig(
         stream=sys.stdout,
@@ -149,6 +152,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
         tracer=args.tracer,
         debug=args.debug,
         system=args.system,
+        profile=profile,
         wait_for=args.wait_for,
         overwrite=args.overwrite,
         skip_sent=args.skip_sent,
@@ -175,6 +179,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
             tracer=args.tracer,
             debug=args.debug,
             system=args.system,
+            profile=profile,
             wait_for=args.wait_for,
             overwrite=args.overwrite,
             skip_sent=args.skip_sent,
@@ -204,6 +209,7 @@ def main(args: Optional[argparse.Namespace] = None) -> None:
             absorber=args.absorber,
             tracer=args.tracer,
             system=args.system,
+            profile=profile,
             debug=args.debug,
             wait_for=args.wait_for,
             overwrite=args.overwrite,
@@ -291,6 +297,8 @@ def get_args() -> argparse.Namespace:
                 Logging verbosity level. Choices:
                 ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'].
 
+            - profile (str, default='cpu'):
+                Execution profile. (gpu or cpu)
     Raises:
     -------
         SystemExit:
@@ -305,6 +313,13 @@ def get_args() -> argparse.Namespace:
         "--system",
         type=str,
         default=None,
+    )
+
+    parser.add_argument(
+        "--profile",
+        choices=["cpu", "gpu"],
+        default="cpu",
+        help="Select the execution profile (default: cpu).",
     )
 
     parser.add_argument(
