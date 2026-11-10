@@ -8,6 +8,7 @@ commands:
       gpu: ""
     slurm:
       constraint: gpu
+      account: desi_g
       gpus: 4
       cpus-per-task: 64
       time: "00:10:00"
@@ -17,6 +18,7 @@ commands:
       gpu: ""
     slurm:
       constraint: gpu
+      account: desi_g
       gpus: 4
       cpus-per-task: 64
       time: "00:20:00"
@@ -27,6 +29,7 @@ commands:
       # seed-per-healpix: ""
     slurm:
       constraint: gpu
+      account: desi_g
       gpus: 4
       cpus-per-task: 64
       time: "00:30:00"
@@ -35,11 +38,15 @@ commands:
     args:
       gpu: ""
       # seed-per-healpix: ""
+      
     slurm:
       constraint: gpu
+      account: desi_g
       gpus: 4
-      cpus-per-task: 64
-      time: "00:30:00"
+      cpus-per-task: 128
+      nproc: 128
+      time: "01:00:00"
+      OMP_NUM_THREADS: 1
 
   picca_metal_dmat.py:
     args:
@@ -47,6 +54,7 @@ commands:
       # seed-per-healpix: ""
     slurm:
       constraint: gpu
+      account: desi_g
       gpus: 4
       cpus-per-task: 64
       time: "02:00:00"
