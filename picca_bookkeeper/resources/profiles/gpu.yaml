@@ -36,6 +36,7 @@ commands:
 
   picca_xdmat.py:
     args:
+      nproc: 128
       gpu: ""
       # seed-per-healpix: ""
       
@@ -44,7 +45,6 @@ commands:
       account: desi_g
       gpus: 4
       cpus-per-task: 128
-      nproc: 128
       time: "01:00:00"
       OMP_NUM_THREADS: 1
 
