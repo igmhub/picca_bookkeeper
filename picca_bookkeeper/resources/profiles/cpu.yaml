@@ -4,30 +4,24 @@ description: Existing CPU execution profile
 commands:
   picca_cf.py:
     args: {}
-    slurm:
-      constraint: cpu
+    slurm: {}
 
   picca_xcf.py:
     args: {}
-    slurm:
-      constraint: cpu
+    slurm: {}
 
   picca_dmat.py:
     args: {}
-    slurm:
-      constraint: cpu
+    slurm: {}
 
   picca_xdmat.py:
     args: {}
-    slurm:
-      constraint: cpu
+    slurm: {}
 
   picca_metal_dmat.py:
     args: {}
-    slurm:
-      constraint: cpu
+    slurm: {}
 
   picca_metal_xdmat.py:
     args: {}
-    slurm:
-      constraint: cpu
+    slurm: {}
