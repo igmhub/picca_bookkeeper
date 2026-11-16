@@ -1,6 +1,6 @@
 ``picca_bookkeeper`` is a tool designed to help running analyses using the package [picca](https://github.com/igmhub/picca/). It allows for the computation of all the steps necessary for the Lyman-alpha 3D analysis using a unified configuration file, appropriately chaining all the jobs.
 
-# Installation (Updated 11/10/26)
+# Installation (Updated 11/16/26)
 The following installation instructions are compatible with picca_bookkeeper v.6.0.1, picca v.9.21.4, and vega v1.8.1.
 
 Create a new conda environment, ensuring up to date dependencies for picca, vega, and the bookkeeper. e.g., using the provided environment.yml:
@@ -103,6 +103,7 @@ picca_bookkeeper_run_full_analysis /path_to_config.yaml
 ```
 
 ## Run full analysis with GPU (default is CPU)
+Note: must have relevant [Picca branch](https://github.com/igmhub/picca/tree/gpu-port) installed for this option to work. 
 ``` bash
 picca_bookkeeper_run_full_analysis /path_to_config.yaml --profile gpu
 ```
