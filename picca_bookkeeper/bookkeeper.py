@@ -393,6 +393,7 @@ class Bookkeeper:
                 "calibration data",
                 "computed deltas",
                 "mask file",
+                "expected flux",
                 "extra args",
                 "slurm args",
             ],
@@ -1034,6 +1035,78 @@ class Bookkeeper:
 
         return extra_args
 
+    def add_expected_flux_options(
+        self,
+        extra_args: Dict,
+        region: str = "lya",
+        calib_step: Optional[int] = None,
+    ) -> Dict:
+        """
+        Add expected flux options from bookkeeper config to extra args.
+
+        Reads the 'expected flux' section under 'delta extraction' if present in
+        the bookkeeper config. Applies general options and region-specific overrides.
+        If a new expected flux type is specified, it replaces the existing expected
+        flux configuration; otherwise, new options are merged.
+
+        Args:
+            extra_args (Dict): Configuration to be used in the run.
+            region (str): Forest region being processed (default: 'lya').
+            calib_step (Optional[int]): Current calibration step if applicable.
+
+        Returns:
+            Dict: Updated extra_args with expected flux options applied.
+        """
+        config_ef = self.config.get("delta extraction", dict()).get(
+            "expected flux", None
+        )
+        if config_ef is None or not isinstance(config_ef, dict):
+            return extra_args
+
+        special_keys = list(forest_regions.keys()) + ["general", "all", "calib"]
+
+        # Base / top-level options for expected flux
+        options: Dict = dict()
+        for k, v in config_ef.items():
+            if k not in special_keys:
+                options[k] = copy.deepcopy(v)
+
+        # Merge general options
+        if "general" in config_ef and isinstance(config_ef["general"], dict):
+            options = DictUtils.merge_dicts(options, config_ef["general"])
+
+        # Merge calibration options if in calibration step
+        if (
+            calib_step is not None
+            and "calib" in config_ef
+            and isinstance(config_ef["calib"], dict)
+        ):
+            options = DictUtils.merge_dicts(options, config_ef["calib"])
+
+        # Merge region-specific options
+        if region in config_ef and isinstance(config_ef[region], dict):
+            options = DictUtils.merge_dicts(options, config_ef[region])
+
+        # Merge 'all' options
+        if "all" in config_ef and isinstance(config_ef["all"], dict):
+            options = DictUtils.merge_dicts(options, config_ef["all"])
+
+        options = DictUtils.remove_dollar(options)
+
+        current_ef = extra_args.get("expected flux", dict())
+        new_type = options.get("type", None)
+        current_type = current_ef.get("type", None)
+
+        if new_type is not None and new_type != current_type:
+            extra_args["expected flux"] = copy.deepcopy(options)
+        else:
+            extra_args["expected flux"] = DictUtils.merge_dicts(
+                current_ef,
+                options,
+            )
+
+        return extra_args
+
     def validate_mock_runs(self, deltas_config_dict: Dict) -> None:
         """
         Validate config file for mock runs.
@@ -1074,8 +1147,8 @@ class Bookkeeper:
                 in ("", None)
             ):
                 raise ValueError(
-                    f"Should define expected flux and raw statistics file in extra "
-                    "args section in order to run TrueContinuum"
+                    f"Should define expected flux and raw statistics file in delta "
+                    "extraction or extra args section in order to run TrueContinuum"
                 )
             deltas_config_dict["expected flux"]["type"] = "TrueContinuum"
             if (
@@ -1383,6 +1456,12 @@ class Bookkeeper:
         deltas_config_dict = self.add_mask_options(
             deltas_config_dict,
             calib_step,
+        )
+
+        deltas_config_dict = self.add_expected_flux_options(
+            deltas_config_dict,
+            region=region,
+            calib_step=calib_step,
         )
 
         self.validate_mock_runs(deltas_config_dict)

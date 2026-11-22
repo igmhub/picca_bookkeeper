@@ -8,6 +8,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import yaml
+
 from picca_bookkeeper.bookkeeper import Bookkeeper
 from picca_bookkeeper.scripts.run_full_analysis import main as run_full
 
@@ -125,6 +127,7 @@ def rename_path(filename):
         filedata = file.read()
 
     filedata = filedata.replace(str(THIS_DIR.parent), "/picca_bookkeeper")
+    filedata = filedata.replace("/private/tmp", "/tmp")
 
     with open(filename, "w") as file:
         file.write(filedata)
@@ -1035,3 +1038,152 @@ class TestBookkeeper(unittest.TestCase):
         with self.assertRaises(FileNotFoundError) as cm:
             out.get_catalog_from_field("catalog")
         self.assertEqual("/globaL/cat.fits", cm.exception.args[1])
+
+    @patch("picca_bookkeeper.tasker.run", side_effect=mock_run)
+    def test_expected_flux_in_delta_extraction(self, mock_func_1):
+        copy_config_substitute(self.files_path / "example_config_guadalupe.yaml")
+        config_path = THIS_DIR / "test_files" / "output" / "tmp.yaml"
+        with open(config_path, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        cfg["delta extraction"]["calib"] = 0
+        cfg["delta extraction"]["expected flux"] = {
+            "type": "MeanContinuumInterpExpectedFlux",
+            "interpolation type": "2D",
+            "limit z": "1.8, 5.",
+            "num z bins": 5,
+            "infer z bins": True,
+            "num iterations": 30,
+        }
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(cfg, f)
+
+        # This should succeed without "ValueError: 'expected flux' is not in list"
+        bookkeeper = Bookkeeper(config_path, read_mode=False)
+
+        # Verify that write_bookkeeper ordered keys properly
+        saved_cfg_path = bookkeeper.paths.config_file
+        with open(saved_cfg_path, "r") as f:
+            saved_cfg = yaml.safe_load(f)
+        self.assertIn("expected flux", saved_cfg["delta extraction"])
+
+        # Run tasker generation
+        tasker = bookkeeper.get_delta_extraction_tasker(region="lya")
+        tasker.write_job()
+
+        # Check generated delta extraction ini file
+        ini_file = (
+            bookkeeper.paths.delta_extraction_path
+            / "configs"
+            / "delta_extraction_lya.ini"
+        )
+        self.assertTrue(ini_file.is_file())
+
+        import configparser
+
+        cp = configparser.ConfigParser()
+        cp.read(ini_file)
+        self.assertIn("expected flux", cp.sections())
+        self.assertEqual(
+            cp["expected flux"]["type"], "MeanContinuumInterpExpectedFlux"
+        )
+        self.assertEqual(cp["expected flux"]["interpolation type"], "2D")
+        self.assertEqual(cp["expected flux"]["limit z"], "1.8, 5.")
+        self.assertEqual(cp["expected flux"]["num z bins"], "5")
+        self.assertEqual(cp["expected flux"]["infer z bins"], "True")
+        self.assertEqual(cp["expected flux"]["num iterations"], "30")
+
+    @patch("picca_bookkeeper.tasker.run", side_effect=mock_run)
+    def test_expected_flux_region_overrides(self, mock_func_1):
+        copy_config_substitute(self.files_path / "example_config_guadalupe.yaml")
+        config_path = THIS_DIR / "test_files" / "output" / "tmp.yaml"
+        with open(config_path, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        cfg["delta extraction"]["calib"] = 0
+        cfg["delta extraction"]["expected flux"] = {
+            "type": "MeanContinuumInterpExpectedFlux",
+            "interpolation type": "2D",
+            "num z bins": 5,
+            "ciii": {
+                "num z bins": 10,
+            },
+        }
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(cfg, f)
+
+        bookkeeper = Bookkeeper(config_path, read_mode=False)
+
+        tasker_lya = bookkeeper.get_delta_extraction_tasker(region="lya")
+        tasker_lya.write_job()
+        tasker_ciii = bookkeeper.get_delta_extraction_tasker(region="ciii")
+        tasker_ciii.write_job()
+
+        import configparser
+
+        cp_lya = configparser.ConfigParser()
+        cp_lya.read(
+            bookkeeper.paths.delta_extraction_path
+            / "configs"
+            / "delta_extraction_lya.ini"
+        )
+        self.assertEqual(cp_lya["expected flux"]["num z bins"], "5")
+
+        cp_ciii = configparser.ConfigParser()
+        cp_ciii.read(
+            bookkeeper.paths.delta_extraction_path
+            / "configs"
+            / "delta_extraction_ciii.ini"
+        )
+        self.assertEqual(cp_ciii["expected flux"]["num z bins"], "10")
+        self.assertEqual(
+            cp_ciii["expected flux"]["type"], "MeanContinuumInterpExpectedFlux"
+        )
+
+    @patch("picca_bookkeeper.tasker.run", side_effect=mock_run)
+    def test_expected_flux_full_analysis(self, mock_func_1):
+        copy_config_substitute(self.files_path / "example_config_guadalupe.yaml")
+        config_path = THIS_DIR / "test_files" / "output" / "tmp.yaml"
+        with open(config_path, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        cfg["delta extraction"]["calib"] = 0
+        cfg["delta extraction"]["expected flux"] = {
+            "type": "MeanContinuumInterpExpectedFlux",
+            "interpolation type": "2D",
+            "limit z": "1.8, 5.",
+            "num z bins": 5,
+            "infer z bins": True,
+            "num iterations": 30,
+        }
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(cfg, f)
+
+        write_full_analysis(config_path)
+
+        ini_file = (
+            THIS_DIR
+            / "test_files"
+            / "output"
+            / "results"
+            / "deltas"
+            / "configs"
+            / "delta_extraction_lya.ini"
+        )
+        self.assertTrue(ini_file.is_file())
+
+        import configparser
+
+        cp = configparser.ConfigParser()
+        cp.read(ini_file)
+        self.assertEqual(
+            cp["expected flux"]["type"], "MeanContinuumInterpExpectedFlux"
+        )
+        self.assertEqual(cp["expected flux"]["interpolation type"], "2D")
+        self.assertEqual(cp["expected flux"]["limit z"], "1.8, 5.")
+        self.assertEqual(cp["expected flux"]["num z bins"], "5")
+        self.assertEqual(cp["expected flux"]["infer z bins"], "True")
+        self.assertEqual(cp["expected flux"]["num iterations"], "30")
