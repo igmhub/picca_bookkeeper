@@ -393,6 +393,7 @@ class Bookkeeper:
                 "calibration data",
                 "computed deltas",
                 "mask file",
+                "data",
                 "expected flux",
                 "extra args",
                 "slurm args",
@@ -1035,6 +1036,72 @@ class Bookkeeper:
 
         return extra_args
 
+    def add_data_options(
+        self,
+        extra_args: Dict,
+        region: str = "lya",
+        calib_step: Optional[int] = None,
+    ) -> Dict:
+        """
+        Add data options from bookkeeper config under 'delta extraction' to extra args.
+
+        Reads the 'data' section under 'delta extraction' if present in the
+        bookkeeper config. Applies general options and region-specific overrides.
+        Allows specifying data 'type' (e.g. DesiHealpix, DesiHealpixFast, DesiHealpixMpi)
+        and other data-related parameters directly under 'delta extraction'.
+
+        Args:
+            extra_args (Dict): Configuration to be used in the run.
+            region (str): Forest region being processed (default: 'lya').
+            calib_step (Optional[int]): Current calibration step if applicable.
+
+        Returns:
+            Dict: Updated extra_args with data options applied.
+        """
+        config_data = self.config.get("delta extraction", dict()).get(
+            "data", None
+        )
+        if config_data is None or not isinstance(config_data, dict):
+            return extra_args
+
+        special_keys = list(forest_regions.keys()) + ["general", "all", "calib"]
+
+        # Base / top-level options for data
+        options: Dict = dict()
+        for k, v in config_data.items():
+            if k not in special_keys:
+                options[k] = copy.deepcopy(v)
+
+        # Merge general options
+        if "general" in config_data and isinstance(config_data["general"], dict):
+            options = DictUtils.merge_dicts(options, config_data["general"])
+
+        # Merge calibration options if in calibration step
+        if (
+            calib_step is not None
+            and "calib" in config_data
+            and isinstance(config_data["calib"], dict)
+        ):
+            options = DictUtils.merge_dicts(options, config_data["calib"])
+
+        # Merge region-specific options
+        if region in config_data and isinstance(config_data[region], dict):
+            options = DictUtils.merge_dicts(options, config_data[region])
+
+        # Merge 'all' options
+        if "all" in config_data and isinstance(config_data["all"], dict):
+            options = DictUtils.merge_dicts(options, config_data["all"])
+
+        options = DictUtils.remove_dollar(options)
+
+        current_data = extra_args.get("data", dict())
+        extra_args["data"] = DictUtils.merge_dicts(
+            current_data,
+            options,
+        )
+
+        return extra_args
+
     def add_expected_flux_options(
         self,
         extra_args: Dict,
@@ -1456,6 +1523,12 @@ class Bookkeeper:
         deltas_config_dict = self.add_mask_options(
             deltas_config_dict,
             calib_step,
+        )
+
+        deltas_config_dict = self.add_data_options(
+            deltas_config_dict,
+            region=region,
+            calib_step=calib_step,
         )
 
         deltas_config_dict = self.add_expected_flux_options(

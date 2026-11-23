@@ -1187,3 +1187,85 @@ class TestBookkeeper(unittest.TestCase):
         self.assertEqual(cp["expected flux"]["num z bins"], "5")
         self.assertEqual(cp["expected flux"]["infer z bins"], "True")
         self.assertEqual(cp["expected flux"]["num iterations"], "30")
+
+    @patch("picca_bookkeeper.tasker.run", side_effect=mock_run)
+    def test_data_type_in_delta_extraction(self, mock_func_1):
+        copy_config_substitute(self.files_path / "example_config_guadalupe.yaml")
+        config_path = THIS_DIR / "test_files" / "output" / "tmp.yaml"
+        with open(config_path, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        cfg["delta extraction"]["calib"] = 0
+        cfg["delta extraction"]["data"] = {
+            "type": "DesiHealpix",
+        }
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(cfg, f)
+
+        bookkeeper = Bookkeeper(config_path, read_mode=False)
+
+        # Verify that write_bookkeeper ordered keys properly
+        saved_cfg_path = bookkeeper.paths.config_file
+        with open(saved_cfg_path, "r") as f:
+            saved_cfg = yaml.safe_load(f)
+        self.assertIn("data", saved_cfg["delta extraction"])
+
+        tasker = bookkeeper.get_delta_extraction_tasker(region="lya")
+        tasker.write_job()
+
+        ini_file = (
+            bookkeeper.paths.delta_extraction_path
+            / "configs"
+            / "delta_extraction_lya.ini"
+        )
+        self.assertTrue(ini_file.is_file())
+
+        import configparser
+
+        cp = configparser.ConfigParser()
+        cp.read(ini_file)
+        self.assertEqual(cp["data"]["type"], "DesiHealpix")
+
+    @patch("picca_bookkeeper.tasker.run", side_effect=mock_run)
+    def test_data_type_region_overrides(self, mock_func_1):
+        copy_config_substitute(self.files_path / "example_config_guadalupe.yaml")
+        config_path = THIS_DIR / "test_files" / "output" / "tmp.yaml"
+        with open(config_path, "r") as f:
+            cfg = yaml.safe_load(f)
+
+        cfg["delta extraction"]["calib"] = 0
+        cfg["delta extraction"]["data"] = {
+            "type": "DesiHealpixFast",
+            "ciii": {
+                "type": "DesiHealpix",
+            },
+        }
+
+        with open(config_path, "w") as f:
+            yaml.safe_dump(cfg, f)
+
+        bookkeeper = Bookkeeper(config_path, read_mode=False)
+
+        tasker_lya = bookkeeper.get_delta_extraction_tasker(region="lya")
+        tasker_lya.write_job()
+        tasker_ciii = bookkeeper.get_delta_extraction_tasker(region="ciii")
+        tasker_ciii.write_job()
+
+        import configparser
+
+        cp_lya = configparser.ConfigParser()
+        cp_lya.read(
+            bookkeeper.paths.delta_extraction_path
+            / "configs"
+            / "delta_extraction_lya.ini"
+        )
+        self.assertEqual(cp_lya["data"]["type"], "DesiHealpixFast")
+
+        cp_ciii = configparser.ConfigParser()
+        cp_ciii.read(
+            bookkeeper.paths.delta_extraction_path
+            / "configs"
+            / "delta_extraction_ciii.ini"
+        )
+        self.assertEqual(cp_ciii["data"]["type"], "DesiHealpix")
