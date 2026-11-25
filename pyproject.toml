@@ -12,7 +12,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
 python = "3.13"
-astropy = "^6.1.7"
+astropy = "^8.0.1"
 fitsio = "^1.2.6"
 getdist = "^1.6.4"
 healpy = "^1.18.0"

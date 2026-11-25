@@ -63,6 +63,21 @@ delta extraction:
   mask file: # Add a line mask file
   # e.g. /.../desicollab/science/lya/y3/loa/deltas/delta-lya-2-0/continuum_fitting_mask.txt
 
+  # Optional: Configure data reader options for delta extraction.
+  # Can specify reader type (e.g. DesiHealpix, DesiHealpixFast, DesiHealpixMpi) directly or per-region.
+  # data:
+  #   type: DesiHealpixFast
+
+  # Optional: Configure expected flux for delta extraction.
+  # Can be specified directly with type and options, or per-region (e.g. general, lya, ciii).
+  # expected flux:
+  #   type: MeanContinuumInterpExpectedFlux
+  #   interpolation type: 2D
+  #   limit z: 1.8, 5.
+  #   num z bins: 5
+  #   infer z bins: True
+  #   num iterations: 30
+
   # Only if you want to re-use calibration data from a different analysis.
   # Insert here the path of a delta-attributes.fits.gz file to use it as 
   # calibration data for the current run.
