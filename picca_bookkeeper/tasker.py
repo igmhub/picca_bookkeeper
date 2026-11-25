@@ -379,6 +379,25 @@ class Tasker:
             "Tasker class has no _make_env_opts defined, use child classes instead."
         )
 
+    def _make_activate_command(self) -> str:
+        """
+        Build the shell line that sets up the software environment.
+
+        If `environment` is a shell script (it ends in ".sh" or points to an
+        existing file), the line is `source <environment>`. Use this for
+        custom setup scripts that, for instance, activate a conda
+        environment and change PYTHONPATH/PATH. Otherwise, `environment` is
+        taken as a conda environment name or path and the line is
+        `conda activate <environment>`.
+
+        Returns:
+            str: Environment activation line.
+        """
+        environment = str(self.environment)
+        if environment.endswith(".sh") or Path(environment).is_file():
+            return f"source {environment}"
+        return f"conda activate {environment}"
+
     def _make_version_control(self) -> str:
         """
         Creates shell commands for printing version information of used packages.
@@ -560,15 +579,10 @@ class SlurmTasker(Tasker):
         else:
             text = ""
 
-        if self.environment.endswith(".sh"):
-            activate = "source "
-        else:
-            activate = "conda activate "
-
         text += textwrap.dedent(
             f"""
 module load python
-{activate}{self.environment}
+{self._make_activate_command()}
 umask 0002
 
 """
@@ -727,15 +741,10 @@ class BashTasker(Tasker):
         else:
             text = ""
 
-        if "sh" in self.environment:
-            activate = ""
-        else:
-            activate = "activate "
-
         text += textwrap.dedent(
             f"""
 module load python
-source {activate}{self.environment}
+{self._make_activate_command()}
 umask 0002
 
 """
