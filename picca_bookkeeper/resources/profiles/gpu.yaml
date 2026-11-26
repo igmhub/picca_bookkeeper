@@ -45,7 +45,7 @@ commands:
       account: desi_g
       gpus: 4
       cpus-per-task: 128
-      time: "01:00:00"
+      time: "01:30:00"
       OMP_NUM_THREADS: 1
 
   picca_metal_dmat.py:
